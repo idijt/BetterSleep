@@ -31,11 +31,12 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerBedEnter(final PlayerBedEnterEvent event){
-        if(event.getPlayer().getWorld().getEnvironment().getId() != 0)
+    public void onPlayerBedEnter(final PlayerBedEnterEvent event) {
+        if (event.getPlayer().getWorld().getEnvironment().getId() != 0)
             return;
 
-        if(getServer().getWorlds().get(0).getTime() > 0 && getServer().getWorlds().get(0).getTime() < 12541 && !getServer().getWorlds().get(0).isThundering())
+        if (getServer().getWorlds().get(0).getTime() > 0 && getServer().getWorlds().get(0).getTime() < 12541
+                && !getServer().getWorlds().get(0).isThundering())
             return;
 
         System.out.println(getServer().getWorlds().get(0).getTime());
@@ -44,14 +45,13 @@ public class Main extends JavaPlugin implements Listener {
         sleepingPlayers.add(event.getPlayer());
         bedMessage(event.getPlayer(), "entered");
 
-
-        if(!enoughPlayers()) {
+        if (!enoughPlayers()) {
             return;
         }
 
         getServer().getScheduler().cancelTasks(this);
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
-            if(!enoughPlayers()) {
+            if (!enoughPlayers()) {
                 return;
             }
             getServer().getWorlds().get(0).setTime(0);
@@ -60,7 +60,7 @@ public class Main extends JavaPlugin implements Listener {
             getServer().broadcastMessage("§aNight successfully skipped!");
 
             getServer().getWorlds().get(0).getPlayers().forEach((player) -> {
-                if(player.isSleeping()){
+                if (player.isSleeping()) {
                     player.wakeup(false);
                 }
             });
@@ -70,14 +70,15 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerBedLeave(PlayerBedLeaveEvent event) {
         sleepingPlayers.remove(event.getPlayer());
-        if((getServer().getWorlds().get(0).getTime() > 12541 && getServer().getWorlds().get(0).getTime() < 23458) || getServer().getWorlds().get(0).isThundering()){
+        if ((getServer().getWorlds().get(0).getTime() > 12541 && getServer().getWorlds().get(0).getTime() < 23458)
+                || getServer().getWorlds().get(0).isThundering()) {
             bedMessage(event.getPlayer(), "left");
         }
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-        if(command.getName().equalsIgnoreCase("bettersleep")) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("bettersleep")) {
             switch (args.length) {
                 case 0:
                     sender.sendMessage("BetterSleep " + getDescription().getVersion());
@@ -86,18 +87,19 @@ public class Main extends JavaPlugin implements Listener {
                     if (args[0].equalsIgnoreCase("pct")) {
                         sender.sendMessage("Percentage: " + percentage);
                         return true;
-                    }else if(args[0].equalsIgnoreCase("mode")) {
+                    } else if (args[0].equalsIgnoreCase("mode")) {
                         String stringMode;
-                        if(!mode){
+                        if (!mode) {
                             stringMode = "\"percentage\"";
-                        }else{
+                        } else {
                             stringMode = "\"playercount\"";
                         }
                         sender.sendMessage("Mode: " + stringMode);
                         return true;
-                    }else{
-                        sender.sendMessage("§4§lPlease enter a valid command!");}
-                        return false;
+                    } else {
+                        sender.sendMessage("§4§lPlease enter a valid command!");
+                    }
+                    return false;
                 case 2:
                     if (args[0].equalsIgnoreCase("pct")) {
                         try {
@@ -117,12 +119,12 @@ public class Main extends JavaPlugin implements Listener {
                         sender.sendMessage("Sleeping percentage: " + percentage + "%");
                         return true;
 
-                    }else if(args[0].equalsIgnoreCase("mode")){
-                        if(args[1].equalsIgnoreCase("percentage")){
+                    } else if (args[0].equalsIgnoreCase("mode")) {
+                        if (args[1].equalsIgnoreCase("percentage")) {
                             mode = false;
-                        }else if(args[1].equalsIgnoreCase("playercount")){
+                        } else if (args[1].equalsIgnoreCase("playercount")) {
                             mode = true;
-                        }else{
+                        } else {
                             sender.sendMessage("§4§lPlease enter percentage or playercount!");
                             return false;
                         }
@@ -130,9 +132,9 @@ public class Main extends JavaPlugin implements Listener {
                         saveConfig();
 
                         String stringMode;
-                        if(!mode){
+                        if (!mode) {
                             stringMode = "\"percentage\"";
-                        }else{
+                        } else {
                             stringMode = "\"playercount\"";
                         }
 
@@ -161,34 +163,35 @@ public class Main extends JavaPlugin implements Listener {
         tabComplete1_1.add("percentage");
         tabComplete1_1.add("playercount");
 
-        if(args.length == 1){
+        if (args.length == 1) {
             return tabComplete0;
         }
-        if(args.length == 2){
-            if(args[0].equalsIgnoreCase("pct")) {
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("pct")) {
                 return tabComplete1_0;
-            }else if(args[0].equalsIgnoreCase("mode")){
+            } else if (args[0].equalsIgnoreCase("mode")) {
                 return tabComplete1_1;
             }
         }
         return null;
     }
 
-    private boolean enoughPlayers(){
-        return ((double)(sleepingPlayers.size())/getServer().getWorlds().get(0).getPlayers().size() >= (percentage / 100d));
+    private boolean enoughPlayers() {
+        return ((double) (sleepingPlayers.size())
+                / getServer().getWorlds().get(0).getPlayers().size() >= (percentage / 100d));
     }
 
-    private void bedMessage(Player player, String string){
-        double d = (double)sleepingPlayers.size() / getServer().getWorlds().get(0).getPlayers().size()*100;
+    private void bedMessage(Player player, String string) {
+        double d = (double) sleepingPlayers.size() / getServer().getWorlds().get(0).getPlayers().size() * 100;
         String output;
-        if(!mode){
+        if (!mode) {
             output = "(" + (int) Math.round(d) + "%/" + percentage + "%)";
-        }else{
-            double v = percentage/100d*getServer().getWorlds().get(0).getPlayers().size();
-            if(v==0){
+        } else {
+            double v = percentage / 100d * getServer().getWorlds().get(0).getPlayers().size();
+            if (v == 0) {
                 v++;
             }
-            output = "(" + sleepingPlayers.size() + "/" + (int)v + ")";
+            output = "(" + sleepingPlayers.size() + "/" + (int) v + ")";
         }
 
         getServer().broadcastMessage("§e" + player.getName() + " " + string + " the bed. " + output);
