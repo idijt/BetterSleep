@@ -101,6 +101,10 @@ public class Main extends JavaPlugin implements Listener {
                     }
                     return false;
                 case 2:
+                    if (!sender.hasPermission("bettersleep.config")) {
+                        sender.sendMessage("§cYou do not have the permission to do that");
+                        return true;
+                    }
                     if (args[0].equalsIgnoreCase("pct")) {
                         try {
                             percentage = Integer.parseInt(args[1]);

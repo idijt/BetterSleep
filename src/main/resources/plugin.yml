@@ -8,3 +8,8 @@ main: betterSleep.Main
 commands:
   bettersleep:
     usage: /<command> [pct/mode] [<percentage>/<percentage/playercount>]
+
+permissions:
+  bettersleep.config:
+    description: Lets user to change the plugin's settings
+    default: op
