@@ -191,11 +191,11 @@ public class Main extends JavaPlugin implements Listener {
         if (!mode) {
             output = "(" + (int) Math.round(d) + "%/" + percentage + "%)";
         } else {
-            double v = percentage / 100d * getServer().getWorlds().get(0).getPlayers().size();
-            if (v == 0) {
-                v++;
+            int requiredSleeping = (int) Math.ceil((percentage / 100d) * getServer().getWorlds().get(0).getPlayers().size());
+            if (requiredSleeping == 0) {
+                requiredSleeping++;
             }
-            output = "(" + sleepingPlayers.size() + "/" + (int) v + ")";
+            output = "(" + sleepingPlayers.size() + "/" + requiredSleeping + ")";
         }
 
         getServer().broadcastMessage("§e" + player.getName() + " " + string + " the bed. " + output);
